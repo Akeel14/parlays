@@ -620,23 +620,15 @@ async function pollESPN() {
         } else if (gInfo.state === 'post') {
           l.status = 'red';
           l.badge = 'Missed';
-          l.risk_tier = 5;
+          l.risk_tier = 0;
         } else {
           const elFrac = Number(gInfo.elapsedFrac || 0.1);
           const progFrac = curVal / Math.max(1, tgt);
           const paceDelta = progFrac - elFrac;
           const isBlowout = (sp === 'NBA' && (gInfo.period || 1) >= 3 && (gInfo.margin || 0) >= 22);
-          if (isBlowout && ((gInfo.margin || 0) >= 25 || paceDelta < 0)) {
-            l.status = 'red';
-            l.badge = `Blowout Risk (${l.remaining} to go)`;
-            l.risk_tier = 0;
-          } else if ((elFrac >= 0.50 && paceDelta < -0.32) || (elFrac >= 0.72 && paceDelta < -0.20)) {
-            l.status = 'red';
-            l.badge = `At Risk (${l.remaining} to go)`;
-            l.risk_tier = 0;
-          } else if ((elFrac >= 0.20 && paceDelta < -0.15) || isBlowout) {
+          if ((elFrac >= 0.20 && paceDelta < -0.15) || isBlowout) {
             l.status = 'yellow';
-            l.badge = isBlowout ? `Blowout Watch (${l.remaining} to go)` : `Behind (${l.remaining} to go)`;
+            l.badge = `Behind (${l.remaining} to go)`;
             l.risk_tier = 1;
           } else {
             l.status = 'green';
