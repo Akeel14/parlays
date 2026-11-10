@@ -42,33 +42,6 @@
   body { padding: 12px 12px 44px; }
   .wrap { max-width: 480px; margin: 0 auto; }
 
-  /* Top System Switcher Bar */
-  .sys-nav {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 12px;
-    background: #111317;
-    padding: 4px;
-    border-radius: 10px;
-    border: 1px solid var(--card-border);
-  }
-  .sys-link {
-    flex: 1;
-    text-align: center;
-    text-decoration: none;
-    font-size: 11.5px;
-    font-weight: 600;
-    padding: 7px 8px;
-    border-radius: 7px;
-    color: var(--muted);
-    transition: all 0.15s ease;
-  }
-  .sys-link.active {
-    background: #1d222b;
-    color: var(--text);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.35);
-  }
-
   .header {
     display: flex;
     align-items: center;
@@ -163,36 +136,66 @@
   .p-pill {
     border: 1px solid var(--card-border);
     background: #111318;
-    color: var(--muted);
+    color: var(--text);
     border-radius: 10px;
     padding: 8px 6px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
+    gap: 3px;
     cursor: pointer;
     font-family: inherit;
     transition: all 0.15s ease;
+    position: relative;
+  }
+  .p-pill.p-green {
+    border-color: rgba(16, 185, 129, 0.45);
+    background: rgba(16, 185, 129, 0.11);
+    color: #ecfdf5;
+  }
+  .p-pill.p-green .p-pill-sub {
+    color: #34d399;
+  }
+  .p-pill.p-yellow {
+    border-color: rgba(245, 158, 11, 0.55);
+    background: rgba(245, 158, 11, 0.14);
+    color: #fffbeb;
+  }
+  .p-pill.p-yellow .p-pill-sub {
+    color: #fbbf24;
+  }
+  .p-pill.p-red {
+    border-color: rgba(239, 68, 68, 0.55);
+    background: rgba(239, 68, 68, 0.14);
+    color: #fef2f2;
+  }
+  .p-pill.p-red .p-pill-sub {
+    color: #f87171;
   }
   .p-pill.active {
-    background: #1b202a;
-    color: var(--text);
-    border-color: rgba(255,255,255,0.22);
-    box-shadow: 0 3px 10px rgba(0,0,0,0.35);
-  }
-  .p-pill.won {
-    border-color: rgba(16, 185, 129, 0.45);
-    background: rgba(16, 185, 129, 0.08);
+    box-shadow: 0 0 0 2px #f8fafc, 0 4px 12px rgba(0,0,0,0.45);
+    transform: translateY(-1px);
   }
   .p-pill-title {
     font-size: 11.5px;
     font-weight: 700;
     color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 5px;
   }
+  .p-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .p-green .p-dot { background: #10b981; box-shadow: 0 0 6px #10b981; }
+  .p-yellow .p-dot { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+  .p-red .p-dot { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
   .p-pill-sub {
     font-size: 10px;
     font-weight: 600;
-    opacity: 0.85;
   }
 
   .ticket-banner {
@@ -204,6 +207,18 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+  }
+  .ticket-banner.p-green {
+    border-color: rgba(16, 185, 129, 0.4);
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.10) 0%, #11141a 100%);
+  }
+  .ticket-banner.p-yellow {
+    border-color: rgba(245, 158, 11, 0.45);
+    background: linear-gradient(180deg, rgba(245, 158, 11, 0.11) 0%, #11141a 100%);
+  }
+  .ticket-banner.p-red {
+    border-color: rgba(239, 68, 68, 0.45);
+    background: linear-gradient(180deg, rgba(239, 68, 68, 0.11) 0%, #11141a 100%);
   }
   .ticket-title {
     font-size: 12.5px;
@@ -234,11 +249,19 @@
     margin-bottom: 8px;
   }
   .leg-card.status-hit {
-    border-color: rgba(16, 185, 129, 0.35);
-    background: linear-gradient(180deg, rgba(16, 185, 129, 0.06) 0%, #121418 100%);
+    border-color: rgba(16, 185, 129, 0.45);
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, #121418 100%);
+  }
+  .leg-card.status-green {
+    border-color: rgba(16, 185, 129, 0.28);
+  }
+  .leg-card.status-yellow {
+    border-color: rgba(245, 158, 11, 0.45);
+    background: linear-gradient(180deg, rgba(245, 158, 11, 0.06) 0%, #121418 100%);
   }
   .leg-card.status-red {
-    border-color: rgba(239, 68, 68, 0.35);
+    border-color: rgba(239, 68, 68, 0.45);
+    background: linear-gradient(180deg, rgba(239, 68, 68, 0.06) 0%, #121418 100%);
   }
   .game-strip {
     display: flex;
@@ -459,6 +482,8 @@ async function pollESPN() {
         const stType = comp.status?.type || {};
         const state = stType.state || 'pre';
         const shortDetail = stType.shortDetail || 'Scheduled';
+        const period = Number(comp.status?.period || 1);
+        const dispClock = String(comp.status?.displayClock || '');
         const competitors = comp.competitors || [];
         if (competitors.length < 2) continue;
         const home = competitors.find(c => c.homeAway === 'home') || competitors[0];
@@ -472,8 +497,23 @@ async function pollESPN() {
           : `${aAbbr} ${aScore} - ${hScore} ${hAbbr}`;
         const clockLbl = state === 'post' ? 'Final' : (state === 'pre' ? `Starts ${shortDetail.split(' - ').pop()}` : shortDetail);
 
-        gameMap[`${sp}_${hAbbr}`] = { state, clock: clockLbl, scoreStr };
-        gameMap[`${sp}_${aAbbr}`] = { state, clock: clockLbl, scoreStr };
+        let remMins = 0;
+        const cm = dispClock.match(/^(\d+):(\d+)$/);
+        if (cm) remMins = Number(cm[1]) + Number(cm[2]) / 60.0;
+        const detLow = shortDetail.toLowerCase();
+        if (detLow.includes('end of') || detLow.includes('halftime') || detLow.includes('intermission')) remMins = 0;
+        let elapsedFrac = 0;
+        if (state === 'post') elapsedFrac = 1.0;
+        else if (state === 'in') {
+          const pLen = sp === 'NBA' ? 12.0 : (sp === 'NHL' ? 20.0 : 15.0);
+          const totLen = sp === 'NBA' ? 48.0 : 60.0;
+          const maxP = sp === 'NHL' ? 3 : 4;
+          const el = (Math.min(Math.max(1, period), maxP) - 1) * pLen + Math.max(0, pLen - remMins);
+          elapsedFrac = Math.max(0.02, Math.min(1.0, el / totLen));
+        }
+
+        gameMap[`${sp}_${hAbbr}`] = { state, clock: clockLbl, scoreStr, elapsedFrac };
+        gameMap[`${sp}_${aAbbr}`] = { state, clock: clockLbl, scoreStr, elapsedFrac };
 
         if (state === 'in' || state === 'post') {
           activeEvents.push(ev.id);
@@ -581,9 +621,22 @@ async function pollESPN() {
           l.badge = 'Missed';
           l.risk_tier = 5;
         } else {
-          l.status = 'green';
-          l.badge = `${l.remaining} to go`;
-          l.risk_tier = 2;
+          const elFrac = Number(gInfo.elapsedFrac || 0.1);
+          const progFrac = curVal / Math.max(1, tgt);
+          const paceDelta = progFrac - elFrac;
+          if ((elFrac >= 0.55 && paceDelta < -0.35) || (elFrac >= 0.75 && paceDelta < -0.22)) {
+            l.status = 'red';
+            l.badge = `At Risk (${l.remaining} to go)`;
+            l.risk_tier = 0;
+          } else if (elFrac >= 0.20 && paceDelta < -0.15) {
+            l.status = 'yellow';
+            l.badge = `Behind (${l.remaining} to go)`;
+            l.risk_tier = 1;
+          } else {
+            l.status = 'green';
+            l.badge = `On Pace (${l.remaining} to go)`;
+            l.risk_tier = 2;
+          }
         }
       }
     }
@@ -610,6 +663,13 @@ async function pollESPN() {
   render();
 }
 
+function getParlayColorClass(p) {
+  const legs = p.legs || [];
+  if (legs.some(l => l.status === 'red')) return 'p-red';
+  if (legs.some(l => l.status === 'yellow')) return 'p-yellow';
+  return 'p-green';
+}
+
 function render() {
   const dayObj = STORE[activeDate];
   if (!dayObj) return;
@@ -630,10 +690,10 @@ function render() {
     grid.style.gridTemplateColumns = dayObj.parlays.length === 1 ? '1fr' : 'repeat(3, 1fr)';
     grid.innerHTML = dayObj.parlays.map(p => {
       const hits = p.legs.filter(l => l.status === 'hit').length;
-      const isWon = hits === p.legs.length;
+      const colorCls = getParlayColorClass(p);
       return `
-        <button class="p-pill ${activeParlayId === p.id ? 'active' : ''} ${isWon ? 'won' : ''}" onclick="selectParlay('${p.id}')">
-          <span class="p-pill-title">${p.short_tab}</span>
+        <button class="p-pill ${colorCls} ${activeParlayId === p.id ? 'active' : ''}" onclick="selectParlay('${p.id}')">
+          <span class="p-pill-title"><span class="p-dot"></span>${p.short_tab}</span>
           <span class="p-pill-sub">${hits}/${p.legs.length} Legs Hit</span>
         </button>
       `;
@@ -644,8 +704,9 @@ function render() {
   const banner = document.getElementById('ticket-banner');
   if (banner && parlay) {
     const hits = parlay.legs.filter(l => l.status === 'hit').length;
+    const colorCls = getParlayColorClass(parlay);
     banner.innerHTML = `
-      <div class="ticket-banner">
+      <div class="ticket-banner ${colorCls}">
         <div>
           <div class="ticket-title">${parlay.name}</div>
           <div class="ticket-sub">${hits} of ${parlay.legs.length} Legs Hit • Zero-Overlap Verified</div>
